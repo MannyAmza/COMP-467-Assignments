@@ -1,7 +1,7 @@
 import csv
 
 # mapping
-mapping_dict = {
+file_mapping = {
     "reel1/partA/1920x1080": "/hpsans13/production",
     "reel1/VFX/Hydraulx": "/hpsans12/production",
     "reel1/VFX/Framestore": "/hpsans13/production",
@@ -23,7 +23,7 @@ def find_mapping(path, mappings):
     return path
 
 # returns range
-def range(numbers):
+def get_range(numbers):
     ranges = []
     start = end = numbers[0]
 
@@ -75,10 +75,10 @@ with open('Project 1\Baselight_export.txt', 'r') as file:
     baselight_data = file.readlines()
 
 # track current location
-currLocation = ""
+current_location = ""
 
 # hold current list of frame numbers
-currNums = []
+current_nums = []
 
 # loop baselight data
 for line in baselight_data:
@@ -88,20 +88,20 @@ for line in baselight_data:
     if line.startswith("/baselightfilesystem1"):
 
         # find range and store it in location
-        if currLocation and currNums:
-            locations.extend([[currLocation, s_e] for s_e in range(currNums)])
+        if current_location and current_nums:
+            locations.extend([[current_location, s_e] for s_e in get_range(current_nums)])
         
         # spllit line, map, and convert nums
         path, *number_strings = line.split()
-        currLocation = find_mapping(path, mapping_dict)  # use mapping
-        currNums = [int(n) for n in number_strings if n.isnumeric()]
+        current_location = find_mapping(path, file_mapping)  # use mapping
+        current_nums = [int(n) for n in number_strings if n.isnumeric()]
 
     # contain additional frame numbers
     else:
-        currNums.extend([int(n) for n in line.split() if n.isnumeric()])
+        current_nums.extend([int(n) for n in line.split() if n.isnumeric()])
 
-if currLocation and currNums:
-    locations.extend([[currLocation, s_e] for s_e in range(currNums)])
+if current_location and current_nums:
+    locations.extend([[current_location, s_e] for s_e in get_range(current_nums)])
 
     # opens output.csv for writing 
 with open('Project 1\output1.csv', 'w', newline='') as csv_file:
@@ -117,5 +117,3 @@ with open('Project 1\output1.csv', 'w', newline='') as csv_file:
         frame_range = f"{start}-{end}" if start != end else f"{start}"
         writer.writerow([location, frame_range])
 
-    # message to show it work
-print("Data exported to 'output1.csv'")
