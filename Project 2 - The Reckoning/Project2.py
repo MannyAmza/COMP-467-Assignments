@@ -44,6 +44,22 @@ def read_xlsx(filename):
     header = list(df.columns)
     for i, row in df.iterrows():
         col2.insert_one(row.to_dict())
+
+#Creating 4 total functions that the assignment asks for
+#1. List all work done by Your user - from both collections(No duplicates)​
+#My user is Mansoor Amza
+#In both collections the column name to check is called Test Owner
+def list_all_by_mansoor():
+    query = {'Test Owner': 'Mansoor Amza'}
+    #Using the find function to find the query in collection 1
+    results = col1.find(query)
+    #Using the find function to find the query in collection 2
+    results2 = col2.find(query)
+    #Check for duplicates
+    all_results = results.copy()
+    all_results.update(results2)
+    print(all_results)
+
     
 
 if __name__ == '__main__':
@@ -51,3 +67,5 @@ if __name__ == '__main__':
         read_csv(args.file)
     if args.file2:
         read_xlsx(args.file2)
+
+    list_all_by_mansoor()
